@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Do we need the monobehavior class inheritance now?
-public class Car : MonoBehaviour {
+
+public class Car{
     private CarType _carType;
     private int _length;
     private GridSpace _startSpace;

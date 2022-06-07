@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Board : MonoBehaviour
+public class Board
 {
 
     private int _boardWidth;
@@ -25,7 +25,9 @@ public class Board : MonoBehaviour
     public List<GridSpace> GetOccupiedSpaces() {
         List<GridSpace> occupiedSpaces = new();
         foreach (Car car in _cars) {
-            occupiedSpaces = (List<GridSpace>)occupiedSpaces.Concat(car.GetOccupiedSpaces());
+            // TODO: find out what's causing this to error
+            occupiedSpaces = (List<GridSpace>)occupiedSpaces.Concat(car.GetOccupiedSpaces()).ToList();
+            // occupiedSpaces = occupiedSpaces.Concat(car.GetOccupiedSpaces()).ToList();
         }
         return occupiedSpaces;
     }
@@ -198,11 +200,11 @@ public class Board : MonoBehaviour
 
         for (int i = 0; i < _cars.Count(); i++) {
             if (orientation == Orientation.Vertical) {
-                if (_cars[i].GetStartSpace().X == rowcolNum) {
+                if (_cars[i].GetStartSpace().X == rowColNum) {
                     countCars += 1;
                 }
             } else {
-                if (_cars[i].GetStartSpace().Y == rowcolNum) {
+                if (_cars[i].GetStartSpace().Y == rowColNum) {
                     countCars += 1;
                 }
             }
@@ -213,13 +215,13 @@ public class Board : MonoBehaviour
 
     public void LogBoardConsole() {
         List<GridSpace> occupiedSpaces = GetOccupiedSpaces();
-        List<GridSpace> goalCarSpaces = (List<GridSpace>)occupiedSpaces.Where((item, index) => index < 2);
-        occupiedSpaces = (List<GridSpace>)occupiedSpaces.Skip(2);
+        List<GridSpace> goalCarSpaces = occupiedSpaces.Where((item, index) => index < 2).ToList();
+        occupiedSpaces = occupiedSpaces.Skip(2).ToList();
 
         string printStr = "";
 
-        for (int x = 0; x < _boardWidth; x++) {
-            for (int y = 0; y < _boardWidth; y++) {
+        for (int y = 0; y < _boardWidth; y++) {
+            for (int x = 0; x < _boardWidth; x++) {
                 GridSpace tempSpace = new(x, y);
                 if (goalCarSpaces.Contains(tempSpace)) {
                     printStr += "X";

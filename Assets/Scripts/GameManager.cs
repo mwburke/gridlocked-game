@@ -5,24 +5,42 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
 
-    [SerializeField] public static int _boardWidth = 6;
-    [SerializeField] public static GridSpace _goalSpace = new(5, 2);
-    [SerializeField] public static GridSpace _carStartSpace = new(0, 2);
-    [SerializeField] private Node _nodePrefab;
-    [SerializeField] private List<Car> _cars;
-    private List<Node> _nodes;
+    [SerializeField] public int boardWidth = 6;
+    [SerializeField] public GridSpace goalSpace = new(5, 2);
+    [SerializeField] public static GridSpace carStartSpace = new(0, 2);
+    [SerializeField] public int numCars = 10;
+    [SerializeField] public float shortCarFraction = 0.5f;
+    [SerializeField] public Color goalCarColor = Color.red;
+    private static readonly List<Color> colors = new List<Color> { Color.black, Color.blue, Color.cyan, Color.green, Color.white, Color.yellow, };
+    [SerializeField] public List<Color> carColors = colors;
+    [SerializeField] public float verticalOrientationFraction = 0.5f;
+    [SerializeField] public int boardGenRetries = 50;
+    [SerializeField] public int carPlaceRetries = 20;
 
-    public Car GoalCar = new(CarType.Goal, 2, _carStartSpace, Orientation.Horizontal, Color.red);
+    public Board board;
+    public Generator generator;
+
+    public Car goalCar = new(CarType.Goal, 2, carStartSpace, Orientation.Horizontal, Color.red);
 
     //[SerializeField] private Block _blockPrefab;
     //[SerializeField] private SpriteRenderer _boardPrefab;
-    //[SerializeField] private List<BlockType> _types;
     //[SerializeField] private float _travelTime = 0.2f;
-    //[SerializeField] private int _winCondition = 2048;
     //[SerializeField] private GameObject _winScreen;
     //[SerializeField] private GameObject _loseScreen;
 
+    void Start() {
+        Debug.Log("Initializing generator");
 
+        generator = new (boardWidth, goalSpace, goalCar, numCars, shortCarFraction, goalCarColor, carColors, verticalOrientationFraction, boardGenRetries, carPlaceRetries);
+
+        Debug.Log("Starting generation");
+        board = generator.GenerateBoard();
+        board.LogBoardConsole();
+        Debug.Log("Completed generation");
+
+
+        // Do I need to create new UI elements for cars and attach the scripts?
+    }
 }
 
 

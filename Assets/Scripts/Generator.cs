@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Generator : MonoBehaviour
+public class Generator
 {
     private int _boardWidth;
     private GridSpace _goalSpace;
@@ -48,12 +48,13 @@ public class Generator : MonoBehaviour
             Board board = new(_boardWidth, _goalSpace);
             board.AddCar(_goalCar);
 
+            // TODO: Make and check lists of generated spaces we don't have to check anymore
             while (board.CountCars() <= _numCars) {
-                Car tempCar = GenerateRandomCar();
                 bool carAdded = false;
                 int carTries = 0;
 
                 while (!carAdded) {
+                    Car tempCar = GenerateRandomCar();
                     if (IsValidCarAddition(board, tempCar)) {
                         board.AddCar(tempCar);
                         carAdded = true;
@@ -85,7 +86,7 @@ public class Generator : MonoBehaviour
         int x = Random.Range(0, _boardWidth - 1);
         int y = Random.Range(0, _boardWidth - 1);
         GridSpace startSpace = new(x, y);
-        Orientation orientation = Random.Range(0f, 1f) < 0.5f ? Orientation.Horizontal : Orientation.Vertical;
+        Orientation orientation = Random.Range(0f, 1f) < _verticalOrientationFraction ? Orientation.Horizontal : Orientation.Vertical;
         Color color = _carColors[Random.Range(0, _carColors.Count - 1)];
 
         Car newCar = new(cartype, length, startSpace, orientation, color);
@@ -105,6 +106,7 @@ public class Generator : MonoBehaviour
         // Count other cars with the same orientation in the same row/column
         // Only want a maximum of two in any given row/column
         int rowColNum = orientation == Orientation.Horizontal ? car.GetStartSpace().Y : car.GetStartSpace().X;
+
         int countAlignedCars = board.CountCarsInRowCol(orientation, rowColNum);
 
         if (countAlignedCars >= 2) {
