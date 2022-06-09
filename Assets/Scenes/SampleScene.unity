@@ -321,7 +321,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardWidth: 6
-  numCars: 6
+  numCars: 10
   shortCarFraction: 0.5
   goalCarColor: {r: 1, g: 0, b: 0, a: 1}
   carColors:
@@ -329,11 +329,14 @@ MonoBehaviour:
   - {r: 0, g: 0, b: 1, a: 1}
   - {r: 0, g: 1, b: 1, a: 1}
   - {r: 0, g: 1, b: 0, a: 1}
-  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 0.8018868, g: 0.8018868, b: 0.8018868, a: 1}
   - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  - {r: 1, g: 0.015686274, b: 0.74381536, a: 1}
+  - {r: 1, g: 0.6022369, b: 0.015686274, a: 1}
+  - {r: 0.31961817, g: 0.015686274, b: 1, a: 1}
   verticalOrientationFraction: 0.5
   boardGenRetries: 50
-  carPlaceRetries: 20
+  carPlaceRetries: 50
 --- !u!4 &323664406
 Transform:
   m_ObjectHideFlags: 0

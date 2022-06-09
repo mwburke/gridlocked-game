@@ -13,9 +13,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] public Color goalCarColor = Color.red;
     private static readonly List<Color> colors = new List<Color> { Color.black, Color.blue, Color.cyan, Color.green, Color.white, Color.yellow, };
     [SerializeField] public List<Color> carColors = colors;
-    [SerializeField] public float verticalOrientationFraction = 0.5f;
+    [SerializeField] public float verticalOrientationFraction = 0.55f;
     [SerializeField] public int boardGenRetries = 50;
-    [SerializeField] public int carPlaceRetries = 20;
+    [SerializeField] public int carPlaceRetries = 50;
 
     public Board board;
     public Generator generator;

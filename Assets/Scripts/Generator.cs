@@ -50,6 +50,8 @@ public class Generator
 
             // TODO: Make and check lists of generated spaces we don't have to check anymore
             while (board.CountCars() <= _numCars) {
+                // Debug.Log("Current number of cars on board: " + board.CountCars().ToString());
+
                 bool carAdded = false;
                 int carTries = 0;
 
