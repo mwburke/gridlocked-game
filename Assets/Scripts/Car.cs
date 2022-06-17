@@ -90,4 +90,12 @@ public struct GridSpace {
     public int Y { get; }
 
     public override string ToString() => $"({X}, {Y})";
+
+    public static bool operator ==(GridSpace s1, GridSpace s2) {
+        return s1.X == s2.X && s1.Y == s2.Y;
+    }
+
+    public static bool operator !=(GridSpace s1, GridSpace s2) {
+        return s1.X != s2.X || s1.Y != s2.Y;
+    }
 }

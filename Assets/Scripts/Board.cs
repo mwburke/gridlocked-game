@@ -128,7 +128,7 @@ public class Board
         // Check after car
         hasAvailableSpace = true;
         checkIndex = carEnd + 1;
-        while (checkIndex < (_boardWidth - (length - 1)) && hasAvailableSpace) {
+        while (checkIndex < _boardWidth && hasAvailableSpace) {
             GridSpace tempSpace;
 
             // TODO: modify this to account for length, check multiple spaces?
@@ -175,9 +175,14 @@ public class Board
         List<GridSpace> moves = GetAvailableMoves(0);
 
         // The goal car is always 2 spaces long
-        GridSpace winSpace = new(_goalSpace.X - 1, _goalSpace.Y);
+        GridSpace winSpace = WinSpace();
 
-        return moves.Contains(winSpace);
+        return moves.Contains(winSpace) || _cars[0].GetStartSpace() == _goalSpace;
+    }
+
+    public GridSpace WinSpace() {
+        GridSpace winSpace = new(_goalSpace.X - 1, _goalSpace.Y);
+        return winSpace;
     }
 
     public bool NewCarOverlapsWithExisting(Car car) {

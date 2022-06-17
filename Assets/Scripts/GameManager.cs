@@ -16,11 +16,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] public float verticalOrientationFraction = 0.55f;
     [SerializeField] public int boardGenRetries = 50;
     [SerializeField] public int carPlaceRetries = 50;
+    [SerializeField] public int maxLongCars = 4;
+    [SerializeField] public int maxDepth = 20;
+    [SerializeField] public int maxVisits = 1000;
 
     public Board board;
+    public Solver solver;
+    public Solution solution;
     public Generator generator;
-
-    public Car goalCar = new(CarType.Goal, 2, carStartSpace, Orientation.Horizontal, Color.red);
 
     //[SerializeField] private Block _blockPrefab;
     //[SerializeField] private SpriteRenderer _boardPrefab;
@@ -31,17 +34,37 @@ public class GameManager : MonoBehaviour
     void Start() {
         Debug.Log("Initializing generator");
 
-        generator = new (boardWidth, goalSpace, goalCar, numCars, shortCarFraction, goalCarColor, carColors, verticalOrientationFraction, boardGenRetries, carPlaceRetries);
+        generator = new (boardWidth, goalSpace, numCars, shortCarFraction, goalCarColor, carColors, verticalOrientationFraction, boardGenRetries, carPlaceRetries, maxLongCars);
 
+        GenerateAndSolve();
+    }
+
+    public void GenerateAndSolve() {
         Debug.Log("Starting generation");
+
+        int boardTries = 0;
+
         board = generator.GenerateBoard();
+
+        while (board.IsWinCondition() && boardTries < boardGenRetries) {
+            board = generator.GenerateBoard();
+            boardTries++;
+            Debug.Log("Board Tries: " + boardTries.ToString());
+        }
+
         board.LogBoardConsole();
         Debug.Log("Completed generation");
 
-
-        // Do I need to create new UI elements for cars and attach the scripts?
+        solver = new BFSSolver(board, maxDepth, maxVisits);
+        Debug.Log("Starting solver");
+        solution = solver.Solve();
+        Debug.Log("Completed solution");
+        Debug.Log(solution);
     }
 }
+
+
+
 
 
 public enum GameState

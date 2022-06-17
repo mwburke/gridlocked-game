@@ -9,23 +9,24 @@ public class Generator
     private int _numCars;
     private float _shortCarFraction;
     private float _verticalOrientationFraction;
-    private Car _goalCar;
     private Color _goalCarColor;
     private List<Color> _carColors;
     private int _boardGenRetries;
     private int _carPlaceRetries;
+    private int _maxLongCars;
+    private int _countLongCars;
 
-    public Generator(int boardWidth, GridSpace goalSpace, Car goalCar, int numCars, float shortCarFraction, Color goalCarColor, List<Color> carColors, float verticalOrientationFraction, int boardGenRetries, int carPlaceRetries) {
+    public Generator(int boardWidth, GridSpace goalSpace, int numCars, float shortCarFraction, Color goalCarColor, List<Color> carColors, float verticalOrientationFraction, int boardGenRetries, int carPlaceRetries, int maxLongCars) {
         _boardWidth = boardWidth;
         _goalSpace = goalSpace;
         _numCars = numCars;
         _shortCarFraction = shortCarFraction;
         _verticalOrientationFraction = verticalOrientationFraction;
-        _goalCar = goalCar;
         _goalCarColor = goalCarColor;
         _carColors = carColors;
         _boardGenRetries = boardGenRetries;
         _carPlaceRetries = carPlaceRetries;
+        _maxLongCars = maxLongCars;
     }
 
     public Board GenerateBoard() {
@@ -43,10 +44,15 @@ public class Generator
          * _carPlaceRetries: integer of how many attempts this function will go through attempting to find a place to place a car until it gives up on the board.
          */
         int boardGenTries = 0;
+        _countLongCars = 0;
         
         while (boardGenTries < _boardGenRetries) {
             Board board = new(_boardWidth, _goalSpace);
-            board.AddCar(_goalCar);
+
+            GridSpace carStartSpace = new(Random.Range(0, 4), 2);
+            Car goalCar = new(CarType.Goal, 2, carStartSpace, Orientation.Horizontal, _goalCarColor);
+
+            board.AddCar(goalCar);
 
             // TODO: Make and check lists of generated spaces we don't have to check anymore
             while (board.CountCars() <= _numCars) {
@@ -84,7 +90,17 @@ public class Generator
 
     public Car GenerateRandomCar() {
         CarType cartype = CarType.Regular;
-        int length = Random.Range(0f, 1f) < _shortCarFraction ? 2 : 3;
+        int length;
+        if (_countLongCars < _maxLongCars) {
+            length = Random.Range(0f, 1f) < _shortCarFraction ? 2 : 3; ;
+        } else {
+            length = 2;
+        }
+        
+        if (length == 3) {
+            _countLongCars += 1;
+        }
+
         int x = Random.Range(0, _boardWidth - 1);
         int y = Random.Range(0, _boardWidth - 1);
         GridSpace startSpace = new(x, y);
