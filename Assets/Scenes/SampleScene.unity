@@ -334,12 +334,12 @@ MonoBehaviour:
   - {r: 1, g: 0.015686274, b: 0.74381536, a: 1}
   - {r: 1, g: 0.6022369, b: 0.015686274, a: 1}
   - {r: 0.31961817, g: 0.015686274, b: 1, a: 1}
-  verticalOrientationFraction: 0.5
+  verticalOrientationFraction: 0.52
   boardGenRetries: 50
   carPlaceRetries: 50
   maxLongCars: 4
-  maxDepth: 20
-  maxVisits: 5000
+  maxDepth: 15
+  maxVisits: 50000
 --- !u!4 &323664406
 Transform:
   m_ObjectHideFlags: 0

@@ -24,7 +24,7 @@ public abstract class Solver {
     public abstract List<Node> FindPossibleNodes(Node node, int priorMoveCar);
 }
 
-
+ 
 public class BFSSolver : Solver {
 
     private Queue<Node> _queue;
@@ -47,14 +47,15 @@ public class BFSSolver : Solver {
         // After completing all visits, review solutions
         if (_solutions.Count != 1) {
             // TODO: decide if none, return null or empty list
-            Debug.Log("Number of solutions found:");
-            Debug.Log(_solutions.Count);
+            Debug.Log("Number of solutions found: " + _solutions.Count.ToString());
             return null;
         } else {
             // Returning the best move, first one with lowest value
             // TODO: decide if this is what we want
             int minMoves = 1000;
             Solution minSolution = null;
+
+            Debug.Log("Number of candidate solutions: " + _solutions.Count.ToString() );
 
             foreach(Solution solution in _solutions) {
                 int countMoves = solution.CountMoves();
@@ -70,36 +71,49 @@ public class BFSSolver : Solver {
 
     public override void VisitNode(Node node) {
 
+        Debug.Log("Number of stored boards with moves: " + _minBoardMoves.Count.ToString());
+        _nodeVisits += 1;
+
         // Check if board configuration was seen before:
         Board nodeBoard = node.GetBoard();
+        Debug.Log("Node Depth: " + node.GetDepth().ToString());
+
+
+        // We only ever up with one of these
+        // Maybe we are messing up when updating the boards for new nodes? We need to make sure they're updated properly 
 
         if (_minBoardMoves.TryGetValue(nodeBoard, out int boardDepth)) {
-            // If so and movecount is >= than stored one, we can stop going down this tree and do nothing
-            if (node.GetDepth() >= boardDepth) {
+            // If so and movecount is > than stored one, we can stop going down this tree and do nothing
+            if (node.GetDepth() > boardDepth) {
+                Debug.Log("Found prior board with more moves. Stopping search from this node.");
                 return;
-            } else {
+            } else if (node.GetDepth() < boardDepth) {
                 // If so and movecount is <, update the stored depth
                 _minBoardMoves[nodeBoard] = node.GetDepth();
             }
         } else {
             // If doesn't exist, add it to the tracker
+            // Debug.Log("Adding new board to board/move tracker.");
             _minBoardMoves.Add(nodeBoard, node.GetDepth());
         }
 
         // Check if board could win, add solution move and add to solutions
         if (nodeBoard.IsWinCondition()) {
+            Debug.Log("Found Solution!");
             _solutions.Add(node.GenerateSolution());
             return;
         }
 
         // Check if maxdepth has been passed, if so, do nothing
         if (boardDepth > _maxDepth) {
+            Debug.Log("Reached maximum depth on node. Stopping search from this node.");
             return;
         }
 
         // If any of these haven't happened, find all possible nodes and add them to the queue
         List<int> carIndices = node.CarIndices();
-        int lastCarIndex = carIndices[carIndices.Count - 1];
+        int lastCarIndex = carIndices[^1];
+
         // TODO: push the min board moves censoring here?
         List<Node> newNodes = FindPossibleNodes(node, lastCarIndex);
 
@@ -137,9 +151,17 @@ public class BFSSolver : Solver {
 
             List<GridSpace> nodeMoves = board.GetAvailableMoves(i);
 
+            
             foreach (GridSpace move in nodeMoves) {
+                // Update the board after each move!!!!
+                Debug.Log("Car: " + i.ToString() + " has available move: " + move.ToString());
+
+                // TODO: check if this is working as expected
+                Board tempBoard = board.DeepCopy();
+                tempBoard.MoveCar(i, move);
+
                 nodes.Add(new Node(
-                    _board,
+                    tempBoard,
                     1,
                     i,
                     move
@@ -187,7 +209,9 @@ public class Node {
 
         Node node = DeepCopy();
         // MoveCar(int carIndex, GridSpace moveSpace)
-        Board board = node.GetBoard();
+        Board board = node.GetBoard().DeepCopy();
+        // Debug.Log("Moving car: " + carMoveIndex.ToString() + " to spot: " + moveSpace.ToString());
+
         board.MoveCar(carMoveIndex, moveSpace);
 
         List<int> allCarMoveIndices = node.CarIndices();

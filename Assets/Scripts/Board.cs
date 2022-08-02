@@ -22,12 +22,20 @@ public class Board
         
     }
 
+    public Board DeepCopy() {
+        return new Board(
+            _boardWidth,
+            _goalSpace,
+            _cars
+        );
+    }
+
     public List<GridSpace> GetOccupiedSpaces() {
         List<GridSpace> occupiedSpaces = new();
         foreach (Car car in _cars) {
             // TODO: find out what's causing this to error
+            // TODO: confirm that I fixed this lol ^
             occupiedSpaces = (List<GridSpace>)occupiedSpaces.Concat(car.GetOccupiedSpaces()).ToList();
-            // occupiedSpaces = occupiedSpaces.Concat(car.GetOccupiedSpaces()).ToList();
         }
         return occupiedSpaces;
     }
@@ -65,9 +73,8 @@ public class Board
         _cars[carIndex].UpdateLocation(moveSpace);
     }
 
-    // TODO: review this and see if we should swap to passing in car object?
-    // TODO: right now, this doesn't include length? 
     public List<GridSpace> GetAvailableMoves(int carIndex) {
+        // TODO: fix this. Not working right
         List<GridSpace> availableMoves = new();
 
         Car car = _cars[carIndex];
@@ -89,7 +96,7 @@ public class Board
             carEnd = startSpace.Y + car.GetLength() - 1;
         }
 
-        List<GridSpace> occupiedSpaces = new();
+        List<GridSpace> occupiedSpaces;
         List<GridSpace> freeSpaces = new();
 
         // Find all available slots within the row/column
@@ -97,7 +104,16 @@ public class Board
             occupiedSpaces = GetOccupiedSpacesRow(startSpace.Y);
             
             for (int i = 0; i < _boardWidth; i++) {
-                GridSpace tempSpace = new GridSpace(i, startSpace.Y);
+                GridSpace tempSpace = new(i, startSpace.Y);
+                if (!occupiedSpaces.Contains(tempSpace)) {
+                    freeSpaces.Add(tempSpace);
+                }
+            }
+        } else {
+            occupiedSpaces = GetOccupiedSpacesCol(startSpace.X);
+            
+            for (int i = 0; i < _boardWidth; i++) {
+                GridSpace tempSpace = new(i, startSpace.X);
                 if (!occupiedSpaces.Contains(tempSpace)) {
                     freeSpaces.Add(tempSpace);
                 }
@@ -107,7 +123,7 @@ public class Board
         // Check prior to car
         bool hasAvailableSpace = true;
         int checkIndex = carStart - 1;
-        while (checkIndex > 0 && hasAvailableSpace) {
+        while (checkIndex >= 0 && hasAvailableSpace) {
             GridSpace tempSpace;
 
             if (orientation == Orientation.Horizontal) {
@@ -188,7 +204,7 @@ public class Board
     public bool NewCarOverlapsWithExisting(Car car) {
         // Check if a new car we want to add overlaps with any existing
         // Just compare the new car's occupied spaces with all existing occupied spaces
-
+        // TODO: figure out if we are using this and if we need it. Should be easy to implement
         return true;
     }
 
@@ -218,27 +234,99 @@ public class Board
         return countCars;
     }
 
-    public void LogBoardConsole() {
-        List<GridSpace> occupiedSpaces = GetOccupiedSpaces();
-        List<GridSpace> goalCarSpaces = occupiedSpaces.Where((item, index) => index < 2).ToList();
-        occupiedSpaces = occupiedSpaces.Skip(2).ToList();
+    public Car GetCar(int carIndex) {
+        return _cars[carIndex];
+    }
+
+    public override string ToString() {
+        int numCars = _cars.Count();
 
         string printStr = "";
 
+        int[,] array = new int[_boardWidth, _boardWidth];
+
+        for (int i = 0; i < numCars; i++) {
+            Car car = _cars[i];
+            
+            List<GridSpace> occupiedSpaces = car.GetOccupiedSpaces();
+            int printNum = i + 1;
+
+            for (int j = 0; j < occupiedSpaces.Count(); j++) {
+                array[occupiedSpaces[j].X, occupiedSpaces[j].Y] = printNum; 
+            }
+        }
+        
         for (int y = 0; y < _boardWidth; y++) {
             for (int x = 0; x < _boardWidth; x++) {
-                GridSpace tempSpace = new(x, y);
-                if (goalCarSpaces.Contains(tempSpace)) {
-                    printStr += "X";
-                } else if (occupiedSpaces.Contains(tempSpace)) {
-                    printStr += "O";
+                if (array[x, y] == 0) {
+                    printStr += "0";
                 } else {
-                    printStr += "-";
+                    printStr += (Convert.ToChar(array[x, y] + 64));
                 }
+                
             }
             printStr += "\n";
         }
 
-        Debug.Log(printStr);
+        return printStr;
+    }
+
+
+
+    public static bool operator ==(Board b1, Board b2) {
+        // Want to compare all of the cars
+        if (b1 == null ^ b2 == null) {
+            return false;
+        }
+
+        if (b1.CountCars() != b2.CountCars()) {
+            return false;
+        }
+
+        for (int i = 0; i < b1._cars.Count(); i++) {
+            if (b1.GetCar(i) != b2.GetCar(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static bool operator !=(Board b1, Board b2) {
+        if (b1 == null ^ b2 == null) {
+            return false;
+        }
+
+        if (b1.CountCars() != b2.CountCars()) {
+            return true;
+        }
+
+        for (int i = 0; i < b1._cars.Count(); i++) {
+            if (b1.GetCar(i) == b2.GetCar(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static bool Equals(Board b1, Board b2) {
+        if (b1 == null ^ b2 == null) {
+            return false;
+        }
+
+        if (b1.CountCars() != b2.CountCars()) {
+            return false;
+        }
+
+        for (int i = 0; i < b1._cars.Count(); i++) {
+            if (b1.GetCar(i) != b2.GetCar(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public override int GetHashCode() {
+        // TODO: confirm this is working properly. I'm not sure it is... not finding any prior boards
+        return this.ToString().GetHashCode();
     }
 }

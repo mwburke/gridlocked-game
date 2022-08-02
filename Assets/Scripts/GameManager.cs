@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("Board Tries: " + boardTries.ToString());
         }
 
-        board.LogBoardConsole();
+        Debug.Log(board.ToString());
         Debug.Log("Completed generation");
 
         solver = new BFSSolver(board, maxDepth, maxVisits);

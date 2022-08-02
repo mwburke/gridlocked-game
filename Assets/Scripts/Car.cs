@@ -63,6 +63,48 @@ public class Car{
     public int GetLength() {
         return _length;
     }
+
+    public static bool operator ==(Car c1, Car c2) {
+       if (c1.GetCarType() == c2.GetCarType()) {
+            if (c1.GetStartSpace() == c2.GetStartSpace()) {
+                if (c1.GetLength() == c2.GetLength()) {
+                    if (c1.GetOrientation() == c2.GetOrientation()) {
+                        return true;
+                    }
+                }
+            }
+       }
+       return false;
+    }
+
+    public static bool operator !=(Car c1, Car c2) {
+        // Want to compare all of the cars
+
+        if (c1.GetCarType() == c2.GetCarType()) {
+            if (c1.GetStartSpace() == c2.GetStartSpace()) {
+                if (c1.GetLength() == c2.GetLength()) {
+                    if (c1.GetOrientation() == c2.GetOrientation()) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public static bool Equals(Car c1, Car c2) {
+        if (c1.GetCarType() == c2.GetCarType()) {
+            if (c1.GetStartSpace() == c2.GetStartSpace()) {
+                if (c1.GetLength() == c2.GetLength()) {
+                    if (c1.GetOrientation() == c2.GetOrientation()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }
 
 
@@ -97,5 +139,17 @@ public struct GridSpace {
 
     public static bool operator !=(GridSpace s1, GridSpace s2) {
         return s1.X != s2.X || s1.Y != s2.Y;
+    }
+
+    public static bool Equals(GridSpace s1, GridSpace s2) {
+        return s1.X == s2.X && s1.Y == s2.Y;
+    }
+
+    public bool Equals(GridSpace s1) {
+        return s1.X == this.X && s1.Y == this.Y;
+    }
+
+    public override int GetHashCode() {
+        return this.ToString().GetHashCode();
     }
 }
