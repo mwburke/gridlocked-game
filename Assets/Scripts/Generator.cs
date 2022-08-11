@@ -131,7 +131,8 @@ public class Generator
             return false;
         }
 
-        return true;
+        // Check that there are no collisions with other cars
+        return board.NewCarOverlapsWithExisting(car);
     }
 
 

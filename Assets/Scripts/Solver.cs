@@ -84,7 +84,7 @@ public class BFSSolver : Solver {
 
         if (_minBoardMoves.TryGetValue(nodeBoard, out int boardDepth)) {
             // If so and movecount is > than stored one, we can stop going down this tree and do nothing
-            if (node.GetDepth() > boardDepth) {
+            if (node.GetDepth() >= boardDepth) {
                 Debug.Log("Found prior board with more moves. Stopping search from this node.");
                 return;
             } else if (node.GetDepth() < boardDepth) {

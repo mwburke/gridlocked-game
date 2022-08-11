@@ -145,6 +145,7 @@ public struct GridSpace {
         return s1.X == s2.X && s1.Y == s2.Y;
     }
 
+    //public override bool Equals(object obj) => this.Equals(obj as TwoDPoint);
     public bool Equals(GridSpace s1) {
         return s1.X == this.X && s1.Y == this.Y;
     }

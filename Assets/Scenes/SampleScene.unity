@@ -321,7 +321,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardWidth: 6
-  numCars: 9
+  numCars: 6
   shortCarFraction: 0.8
   goalCarColor: {r: 1, g: 0, b: 0, a: 1}
   carColors:

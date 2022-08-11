@@ -204,8 +204,11 @@ public class Board
     public bool NewCarOverlapsWithExisting(Car car) {
         // Check if a new car we want to add overlaps with any existing
         // Just compare the new car's occupied spaces with all existing occupied spaces
-        // TODO: figure out if we are using this and if we need it. Should be easy to implement
-        return true;
+
+        List<GridSpace> carSpaces = car.GetOccupiedSpaces();
+        List<GridSpace> boardSpaces = GetOccupiedSpaces();
+
+        return boardSpaces.Intersect(carSpaces).Any();
     }
 
     public void AddCar(Car car) {
@@ -251,6 +254,8 @@ public class Board
             List<GridSpace> occupiedSpaces = car.GetOccupiedSpaces();
             int printNum = i + 1;
 
+            // TODO: figure out why this is throwing an out of bounds exception
+            // Maybe it has to do with length checking and illegal moves?
             for (int j = 0; j < occupiedSpaces.Count(); j++) {
                 array[occupiedSpaces[j].X, occupiedSpaces[j].Y] = printNum; 
             }
@@ -326,7 +331,7 @@ public class Board
     }
 
     public override int GetHashCode() {
-        // TODO: confirm this is working properly. I'm not sure it is... not finding any prior boards
+        // TODO: confirm this is working properly
         return this.ToString().GetHashCode();
     }
 }
