@@ -190,13 +190,13 @@ public class Node {
         _carMoveIndex = carMoveIndex;
         _moveSpace = moveSpace;
 
-        if (allCarMoveIndices == null) {
+        if (allCarMoveIndices is null) {
             _allCarMoveIndices.Add(carMoveIndex);
         } else {
             _allCarMoveIndices = allCarMoveIndices;
         }
 
-        if (allCarMovespaces == null) {
+        if (allCarMovespaces is null) {
             _allCarMoveSpaces.Add(moveSpace);
         } else {
             _allCarMoveSpaces = allCarMovespaces;

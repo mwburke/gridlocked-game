@@ -65,16 +65,16 @@ public class Car{
     }
 
     public static bool operator ==(Car c1, Car c2) {
-       if (c1.GetCarType() == c2.GetCarType()) {
-            if (c1.GetStartSpace() == c2.GetStartSpace()) {
-                if (c1.GetLength() == c2.GetLength()) {
-                    if (c1.GetOrientation() == c2.GetOrientation()) {
-                        return true;
+       if (c1.GetCarType() != c2.GetCarType()) {
+            if (c1.GetStartSpace() != c2.GetStartSpace()) {
+                if (c1.GetLength() != c2.GetLength()) {
+                    if (c1.GetOrientation() != c2.GetOrientation()) {
+                        return false;
                     }
                 }
             }
        }
-       return false;
+       return true;
     }
 
     public static bool operator !=(Car c1, Car c2) {
@@ -94,16 +94,29 @@ public class Car{
     }
 
     public static bool Equals(Car c1, Car c2) {
-        if (c1.GetCarType() == c2.GetCarType()) {
-            if (c1.GetStartSpace() == c2.GetStartSpace()) {
-                if (c1.GetLength() == c2.GetLength()) {
-                    if (c1.GetOrientation() == c2.GetOrientation()) {
-                        return true;
+        if (c1.GetCarType() != c2.GetCarType()) {
+            if (c1.GetStartSpace() != c2.GetStartSpace()) {
+                if (c1.GetLength() != c2.GetLength()) {
+                    if (c1.GetOrientation() != c2.GetOrientation()) {
+                        return false;
                     }
                 }
             }
         }
-        return false;
+        return true;
+    }
+
+    public bool Equals(Car c2) {
+        if (this.GetCarType() != c2.GetCarType()) {
+            if (this.GetStartSpace() != c2.GetStartSpace()) {
+                if (this.GetLength() != c2.GetLength()) {
+                    if (this.GetOrientation() != c2.GetOrientation()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 }
 

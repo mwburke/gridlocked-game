@@ -14,7 +14,7 @@ public class Board
     public Board(int boardWidth, GridSpace goalSpace, List<Car> cars = null) {
         _boardWidth = boardWidth;
         _goalSpace = goalSpace;
-        if (cars == null) {
+        if (cars is null) {
             _cars = new();
         } else {
             _cars = cars;
@@ -33,8 +33,6 @@ public class Board
     public List<GridSpace> GetOccupiedSpaces() {
         List<GridSpace> occupiedSpaces = new();
         foreach (Car car in _cars) {
-            // TODO: find out what's causing this to error
-            // TODO: confirm that I fixed this lol ^
             occupiedSpaces = (List<GridSpace>)occupiedSpaces.Concat(car.GetOccupiedSpaces()).ToList();
         }
         return occupiedSpaces;
@@ -279,16 +277,19 @@ public class Board
 
 
     public static bool operator ==(Board b1, Board b2) {
-        // Want to compare all of the cars
-        if (b1 == null ^ b2 == null) {
+        // Return false if either is null
+        // This doesn't follow conventions of null comparisons.. oh well
+        if (b1 is null | b2 is null) {
             return false;
         }
 
+        // If either board has a different number of cars, theydon't match
         if (b1.CountCars() != b2.CountCars()) {
             return false;
         }
 
-        for (int i = 0; i < b1._cars.Count(); i++) {
+        // Want to compare all of the cars
+        for (int i = 0; i < b1.CountCars(); i++) {
             if (b1.GetCar(i) != b2.GetCar(i)) {
                 return false;
             }
@@ -297,16 +298,35 @@ public class Board
     }
 
     public static bool operator !=(Board b1, Board b2) {
-        if (b1 == null ^ b2 == null) {
-            return false;
+        if (b1 is null | b2 is null) {
+            return true;
         }
 
         if (b1.CountCars() != b2.CountCars()) {
             return true;
         }
 
-        for (int i = 0; i < b1._cars.Count(); i++) {
+        int matchCount = 0;
+        for (int i = 0; i < b1.CountCars(); i++) {
             if (b1.GetCar(i) == b2.GetCar(i)) {
+                matchCount += 1;
+            }
+        }
+
+        return matchCount == b1.CountCars();
+    }
+
+    public bool Equals(Board b1) {
+        if (this is null | b1 is null) {
+            return false;
+        }
+
+        if (b1.CountCars() != this.CountCars()) {
+            return false;
+        }
+
+        for (int i = 0; i < b1._cars.Count(); i++) {
+            if (b1.GetCar(i) != this.GetCar(i)) {
                 return false;
             }
         }
@@ -314,7 +334,7 @@ public class Board
     }
 
     public static bool Equals(Board b1, Board b2) {
-        if (b1 == null ^ b2 == null) {
+        if (b1 is null | b2 is null) {
             return false;
         }
 

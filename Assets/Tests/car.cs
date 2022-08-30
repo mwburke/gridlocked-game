@@ -19,11 +19,19 @@ public class car
     }
 
     [Test]
-    public void car_equality_test() {
+    public void car_equality_test_0() {
         Car c1 = new (CarType.Regular, 2, new GridSpace(1, 1), Orientation.Horizontal, Color.red);
         Car c2 = new (CarType.Regular, 2, new GridSpace(1, 1), Orientation.Horizontal, Color.red);
 
         Assert.IsTrue(c1 == c2);
+    }
+
+    [Test]
+    public void car_equality_test_1() {
+        Car c1 = new(CarType.Regular, 2, new GridSpace(1, 1), Orientation.Horizontal, Color.red);
+        Car c2 = new(CarType.Regular, 2, new GridSpace(1, 1), Orientation.Horizontal, Color.red);
+
+        Assert.IsTrue(c1.Equals(c2));
     }
 
     [Test]
