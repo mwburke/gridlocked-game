@@ -45,17 +45,19 @@ public class BFSSolver : Solver {
         }
 
         // After completing all visits, review solutions
-        if (_solutions.Count != 1) {
+        if (_solutions.Count < 1) {
             // TODO: decide if none, return null or empty list
             Debug.Log("Number of solutions found: " + _solutions.Count.ToString());
             return null;
+        } else if (_solutions.Count == 1) {
+            return _solutions[0];
         } else {
             // Returning the best move, first one with lowest value
-            // TODO: decide if this is what we want
+            // Arbitrarily take the first appearing smallest solution
             int minMoves = 1000;
             Solution minSolution = null;
 
-            Debug.Log("Number of candidate solutions: " + _solutions.Count.ToString() );
+            Debug.Log("Number of candidate solutions: " + _solutions.Count.ToString());
 
             foreach(Solution solution in _solutions) {
                 int countMoves = solution.CountMoves();
@@ -71,12 +73,12 @@ public class BFSSolver : Solver {
 
     public override void VisitNode(Node node) {
 
-        Debug.Log("Number of stored boards with moves: " + _minBoardMoves.Count.ToString());
+        // Debug.Log("Number of stored boards with moves: " + _minBoardMoves.Count.ToString());
         _nodeVisits += 1;
 
         // Check if board configuration was seen before:
         Board nodeBoard = node.GetBoard();
-        Debug.Log("Node Depth: " + node.GetDepth().ToString());
+        // Debug.Log("Node Depth: " + node.GetDepth().ToString());
 
 
         // We only ever up with one of these
@@ -99,7 +101,7 @@ public class BFSSolver : Solver {
 
         // Check if board could win, add solution move and add to solutions
         if (nodeBoard.IsWinCondition()) {
-            Debug.Log("Found Solution!");
+            // Debug.Log("Found Solution!");
             _solutions.Add(node.GenerateSolution());
             return;
         }
@@ -153,8 +155,6 @@ public class BFSSolver : Solver {
 
             
             foreach (GridSpace move in nodeMoves) {
-                // Update the board after each move!!!!
-                Debug.Log("Car: " + i.ToString() + " has available move: " + move.ToString());
 
                 // TODO: check if this is working as expected
                 Board tempBoard = board.DeepCopy();
@@ -208,9 +208,7 @@ public class Node {
         // Utility function to generate new nodes from existing, given the car and the move
 
         Node node = DeepCopy();
-        // MoveCar(int carIndex, GridSpace moveSpace)
         Board board = node.GetBoard().DeepCopy();
-        // Debug.Log("Moving car: " + carMoveIndex.ToString() + " to spot: " + moveSpace.ToString());
 
         board.MoveCar(carMoveIndex, moveSpace);
 
@@ -232,7 +230,7 @@ public class Node {
 
     public Solution GenerateSolution() {
         _allCarMoveIndices.Add(0);
-        _allCarMoveSpaces.Add(_board.WinSpace());
+        _allCarMoveSpaces.Add(new GridSpace(_board.WinSpace().X, _board.WinSpace().Y));
 
         return new Solution(_allCarMoveIndices, _allCarMoveSpaces);
     }
@@ -265,7 +263,6 @@ public class Node {
     }
 }
 
-// TODO: figure out if we want to add anything else to this?
 public class Solution {
 
     private List<int> _carIndices;

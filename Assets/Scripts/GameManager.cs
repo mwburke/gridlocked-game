@@ -58,7 +58,11 @@ public class GameManager : MonoBehaviour
         solver = new BFSSolver(board, maxDepth, maxVisits);
         Debug.Log("Starting solver");
         solution = solver.Solve();
-        Debug.Log("Completed solution");
+        Debug.Log("Completed solving process");
+        if (solution is not null) {
+            Debug.Log("Solution has " + solution.CountMoves().ToString() + " moves.");
+        }
+        
         Debug.Log(solution);
     }
 }

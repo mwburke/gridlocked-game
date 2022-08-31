@@ -72,26 +72,23 @@ public class Board
     }
 
     public List<GridSpace> GetAvailableMoves(int carIndex) {
-        // TODO: fix this. Not working right
         List<GridSpace> availableMoves = new();
 
         Car car = _cars[carIndex];
+        List<GridSpace> carOccupiedSpaces = car.GetOccupiedSpaces();
         Orientation orientation = car.GetOrientation();
         GridSpace startSpace = car.GetStartSpace();
         int length = car.GetLength();
 
         int carStart;
-        int carEnd;
 
         // Set starting point to check from
         // Either X or Y since the car can only move in one direction 
         // depending on the orientation
         if (orientation == Orientation.Horizontal) {
             carStart = startSpace.X;
-            carEnd = startSpace.X + car.GetLength() - 1;
         } else {
             carStart = startSpace.Y;
-            carEnd = startSpace.Y + car.GetLength() - 1;
         }
 
         List<GridSpace> occupiedSpaces;
@@ -100,7 +97,9 @@ public class Board
         // Find all available slots within the row/column
         if (orientation == Orientation.Horizontal) {
             occupiedSpaces = GetOccupiedSpacesRow(startSpace.Y);
-            
+            // Remove all current car spaces from the occupied spaces
+            occupiedSpaces.RemoveAll(t => carOccupiedSpaces.Contains(t));
+
             for (int i = 0; i < _boardWidth; i++) {
                 GridSpace tempSpace = new(i, startSpace.Y);
                 if (!occupiedSpaces.Contains(tempSpace)) {
@@ -109,9 +108,11 @@ public class Board
             }
         } else {
             occupiedSpaces = GetOccupiedSpacesCol(startSpace.X);
-            
+            // Remove all current car spaces from the occupied spaces
+            occupiedSpaces.RemoveAll(t => carOccupiedSpaces.Contains(t));
+
             for (int i = 0; i < _boardWidth; i++) {
-                GridSpace tempSpace = new(i, startSpace.X);
+                GridSpace tempSpace = new(startSpace.X, i);
                 if (!occupiedSpaces.Contains(tempSpace)) {
                     freeSpaces.Add(tempSpace);
                 }
@@ -141,27 +142,30 @@ public class Board
 
         // Check after car
         hasAvailableSpace = true;
-        checkIndex = carEnd + 1;
-        while (checkIndex < _boardWidth && hasAvailableSpace) {
-            GridSpace tempSpace;
+        checkIndex = carStart + 1;
+        while (checkIndex < (_boardWidth - (length - 1)) && hasAvailableSpace) {
+            List<GridSpace> tempSpaces = new();
 
-            // TODO: modify this to account for length, check multiple spaces?
             if (orientation == Orientation.Horizontal) {
-                tempSpace = new(checkIndex, startSpace.Y);
+                for (int i = 0; i < length; i++) {
+                    tempSpaces.Add(new GridSpace(checkIndex + i, startSpace.Y));
+                }
             } else {
-                tempSpace = new(startSpace.X, checkIndex);
+                for(int i = 0; i < length; i++) {
+                    tempSpaces.Add(new(startSpace.X, checkIndex + i));
+                }
             }
 
-            if (freeSpaces.Contains(tempSpace)) {
+            if (!tempSpaces.Except(freeSpaces).Any()) {
+
                 // Actual start move space
                 GridSpace startMoveSpace;
                 if (orientation == Orientation.Horizontal) {
-                    startMoveSpace = new(checkIndex - (length - 1), startSpace.Y);
+                    startMoveSpace = new(checkIndex, startSpace.Y);
                 } else {
-                    startMoveSpace = new(startSpace.X, checkIndex - (length - 1));
+                    startMoveSpace = new(startSpace.X, checkIndex);
                 }
 
-                // TODO: double check this is right
                 availableMoves.Add(startMoveSpace);
                 checkIndex += 1;
             } else {
@@ -198,7 +202,7 @@ public class Board
         GridSpace winSpace = new(_goalSpace.X - 1, _goalSpace.Y);
         return winSpace;
     }
-
+        
     public bool NewCarOverlapsWithExisting(Car car) {
         // Check if a new car we want to add overlaps with any existing
         // Just compare the new car's occupied spaces with all existing occupied spaces
@@ -351,7 +355,6 @@ public class Board
     }
 
     public override int GetHashCode() {
-        // TODO: confirm this is working properly
         return this.ToString().GetHashCode();
     }
 }
