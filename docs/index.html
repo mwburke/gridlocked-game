@@ -602,12 +602,11 @@
     // that only use token colours need nothing, the CSS already moved them.
     document.dispatchEvent(new CustomEvent('a11ychange',{detail:{on:on}}));
   }
-  // No media query reports colour blindness, so prefers-contrast is only a
-  // hint — it catches readers who already told the OS, and an explicit choice
-  // always wins over it.
+  // Contrast is off by default: only an explicit, stored choice turns it on.
+  // The choice is shared across the site because every article sits on the one
+  // origin. prefers-contrast is deliberately not auto-honoured here.
   var pref=stored();
-  var auto=window.matchMedia&&window.matchMedia('(prefers-contrast: more)').matches;
-  apply(pref?pref==='on':!!auto,false);
+  apply(pref==='on',false);
   if(btn) btn.addEventListener('click',function(){ apply(!root.hasAttribute('data-a11y'),true); });
 })();
 </script>
